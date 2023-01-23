@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  namespace: system
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: server
+    spec:
+      containers:
+        - name: greeter
+          image: ko://github.com/adambkaplan/go-k8s-middleware/go-grpc-k8s-auth/example/server
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP

@@ -1,0 +1,11 @@
+resources:
+- namespace.yaml
+- deployment.yaml
+- service.yaml
+
+commonLabels:
+  app.kubernetes.io/name: greeter
+  app.kubernetes.io/version: v0.0.1
+  app.kubernetes.io/component: server
+  app.kubernetes.io/part-of: greeter
+  app.kubernetes.io/managed-by: kustomize

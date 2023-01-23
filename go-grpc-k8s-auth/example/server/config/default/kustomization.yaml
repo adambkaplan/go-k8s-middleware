@@ -1,0 +1,5 @@
+resources:
+- ../server
+
+namespace: go-grpc-k8s-auth-example
+namePrefix: greeter-
