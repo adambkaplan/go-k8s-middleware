@@ -3,4 +3,5 @@ go 1.19
 use (
 	./gin-k8s-auth
 	./go-grpc-k8s-auth
+	./lib
 )
