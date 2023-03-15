@@ -19,10 +19,10 @@ func NewTokenAuthenticator(client kubernetes.Interface) *TokenAuthenticator {
 	}
 }
 
-func (t *TokenAuthenticator) AuthenticateFromHeader(ctx context.Context, authHeader string) (authnv1.UserInfo, error) {
+func (t *TokenAuthenticator) AuthenticateFromHeader(ctx context.Context, authHeader string) (bool, authnv1.UserInfo, error) {
 	bearerToken, err := extractBearerToken(authHeader)
 	if err != nil || bearerToken == "" {
-		return authnv1.UserInfo{}, ErrBadRequest
+		return false, authnv1.UserInfo{}, err
 	}
 	tokenReview, err := t.client.TokenReviews().Create(ctx, &authnv1.TokenReview{
 		Spec: authnv1.TokenReviewSpec{
@@ -30,11 +30,8 @@ func (t *TokenAuthenticator) AuthenticateFromHeader(ctx context.Context, authHea
 		},
 	}, metav1.CreateOptions{})
 	if err != nil {
-		return authnv1.UserInfo{}, ErrInternalAuthN
-	}
-	if !tokenReview.Status.Authenticated {
-		return tokenReview.Status.User, ErrUnauthenticated
+		return false, authnv1.UserInfo{}, ErrInternalAuthN
 	}
 
-	return tokenReview.Status.User, nil
+	return tokenReview.Status.Authenticated, tokenReview.Status.User, nil
 }

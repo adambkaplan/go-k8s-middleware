@@ -28,7 +28,7 @@ func TestAuthenticateFromHeader(t *testing.T) {
 		return true, tr, nil
 	})
 	authn := NewTokenAuthenticator(fake)
-	user, err := authn.AuthenticateFromHeader(ctx, authHeader)
+	_, user, err := authn.AuthenticateFromHeader(ctx, authHeader)
 	if err != nil {
 		t.Errorf("failed to authenticate: %v", err)
 	}
