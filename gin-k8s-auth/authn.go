@@ -14,7 +14,7 @@ import (
 func K8SAuthenticator(client kubernetes.Interface) gin.HandlerFunc {
 	authenticator := lib.NewTokenAuthenticator(client)
 	return func(ctx *gin.Context) {
-		authHeader := ctx.Request.Header.Get("authorization")
+		authHeader := ctx.Request.Header.Get("Authorization")
 		if authHeader == "" {
 			// TODO: Send WWW-Authenticate response header?
 			ctx.AbortWithStatus(http.StatusUnauthorized)
