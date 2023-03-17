@@ -22,6 +22,10 @@ spec:
     value: quay.io/redhat-appstudio/user-workload:{{revision}}
   - name: revision
     value: '{{revision}}'
+  - name: path-context
+    value: gin-k8s-auth
+  - name: dockerfile
+    value: examples/server/Dockerfile
   pipelineSpec:
     finally:
     - name: show-summary
