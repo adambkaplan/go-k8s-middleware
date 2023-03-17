@@ -1,4 +1,4 @@
-go 1.19
+go 1.18
 
 use (
 	./gin-k8s-auth
