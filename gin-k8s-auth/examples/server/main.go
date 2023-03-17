@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"k8s.io/client-go/kubernetes"
@@ -25,23 +24,32 @@ func main() {
 	flag.Parse()
 
 	r := gin.Default()
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+
+	client, err := getKubeClient(*kubeconfig)
 	if err != nil {
-		fmt.Printf("Failed to create kubernetes client: %v", err)
-		os.Exit(1)
+		fmt.Printf("WARN: %v\n", client)
 	}
-	client, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		fmt.Printf("Failed to create kubernetes client: %v", err)
-		os.Exit(1)
+	if client != nil {
+		fmt.Printf("INFO: Running hello server with k8s authentication middleware")
+		r.Use(gink8sauth.K8SAuthenticator(client))
 	}
 
-	r.Use(gink8sauth.K8SAuthenticator(client))
 	r.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "hello world!",
 		})
 	})
-	fmt.Print("Running hello world server with k8s auth middleware")
 	r.Run()
+}
+
+func getKubeClient(kubeconfig string) (kubernetes.Interface, error) {
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build kubeconfig: %v", err)
+	}
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create kubernetes client: %v", err)
+	}
+	return client, nil
 }
